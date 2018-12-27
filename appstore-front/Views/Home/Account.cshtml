@@ -1,0 +1,52 @@
+@{
+    var userObj = ViewData["Userinfo"];
+    UserInfo User = null;
+    if(userObj!=null)
+    {
+      User = userObj as UserInfo;
+    }
+    var sso_error = ViewData["SSOError"];
+}
+
+<div class="container" style="padding-top: 40px;padding-bottom: 40px">
+
+@if(User == null)
+{
+  <form style="max-width: 330px;padding: 15px;margin: 0 auto;" action="@Url.Action("DoLogin","Home")">
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="input" id="inputEmail" class="form-control" placeholder="UserName" required="" autofocus="" name="UserName" value="scott">
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" name="Password" value="123456">
+    
+    @if(sso_error!=null)
+    {
+      <span style="color:red;">@(sso_error.ToString())</span>
+    }
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    
+  </form>
+}
+else
+{
+  <div class="page-header">
+    <h1>用户信息</h1>
+    <h3 class="lead">UserName: @User.userName</h3>
+
+    <div class="row">
+      <div class="col-xs-6 col-lg-4">
+        <img src="@User.avatar" style="max-width: 200px"><img>
+      </div>
+      <div class="col-xs-6 col-lg-8">
+        <h3 class="lead">nickName: @User.nickName</h3>
+        <h3 class="lead">mobileNumber: @User.mobileNumber</h3>
+        <h3 class="lead">email: @User.email</h3>
+        <h3 class="lead">lowerdEmail: @User.lowerdEmail</h3>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="LoginOut">退出</a>
+      </div>
+    </div>
+  </div>
+}
+
+</div>

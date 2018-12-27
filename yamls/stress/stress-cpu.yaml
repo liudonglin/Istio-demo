@@ -1,0 +1,43 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: stress-cpu
+  namespace: test-stress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-stress
+      labels:
+        app: stress-cpu
+        version: v1
+    spec:
+      containers:
+      - name: stress-cpu
+        image: gavin/stress-test:1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits: 
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stress-cpu-service
+  namespace: test-stress
+  labels:
+    app: stress-cpu
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9080
+    name: http
+    targetPort: 5000
+  selector:
+    app: stress-cpu
+---

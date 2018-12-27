@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: appservice
+  namespace: test-appstore
+spec:
+  hosts:
+    - appservice
+  http:
+  - route:
+    - destination:
+        host: appservice
+        subset: v1
+      weight: 10
+    - destination:
+        host: appservice
+        subset: v2
+      weight: 90
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: orderservice
+  namespace: test-appstore
+spec:
+  hosts:
+    - orderservice
+  http:
+  - route:
+    - destination:
+        host: orderservice
+        subset: v1
+---

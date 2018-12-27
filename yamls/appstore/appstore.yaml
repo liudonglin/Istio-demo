@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appfront
+  namespace: test-appstore
+  labels:
+    app: appfront
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9080
+    name: http
+    targetPort: 5000
+  selector:
+    app: appfront
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: appfront-v1
+  namespace: test-appstore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-appstore
+      labels:
+        app: appfront
+        version: v1
+    spec:
+      containers:
+      - name: appfront
+        image: gavin/appstore-front:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: appservice
+  namespace: test-appstore
+  labels:
+    app: appservice
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9080
+    name: http
+    targetPort: 5001
+  selector:
+    app: appservice
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: appservice-v1
+  namespace: test-appstore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-appstore
+      labels:
+        app: appservice
+        version: v1
+    spec:
+      containers:
+      - name: appservice
+        image: gavin/appstore-appservice:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5001
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: appservice-v2
+  namespace: test-appstore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-appstore
+      labels:
+        app: appservice
+        version: v2
+    spec:
+      containers:
+      - name: appservice
+        image: gavin/appstore-appservice:2.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderservice
+  namespace: test-appstore
+  labels:
+    app: apporder
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9080
+    name: http
+    targetPort: 5002
+  selector:
+    app: apporder
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apporder-v1
+  namespace: test-appstore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-appstore
+      labels:
+        app: apporder
+        version: v1
+    spec:
+      containers:
+      - name: apporder
+        image: gavin/appstore-orderservice:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5002
+---

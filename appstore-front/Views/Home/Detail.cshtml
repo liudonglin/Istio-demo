@@ -1,0 +1,61 @@
+@{
+    var App = ViewData["AppInfo"] as AppEntity;
+    var ErrorInfo = ViewData["Appservice_Error"].ToString();
+}
+
+<div class="row">
+    
+    <div class="col-xs-6 col-md-4">
+        <h2>@App.AppName</h2>
+        <p>价格: @App.AppPrice</p>
+        <p>发行时间: @App.PublishDate.ToString("yyyy-MM-dd")</p>
+        <p>描述: @App.AppDescription</p>
+    </div>
+    <div class="col-xs-6 col-md-8">
+        <img src="@App.AppImage" style="max-width: 300px"/>
+    </div>
+
+    <div class="col-xs-12 col-md-12">
+        <h3>销售记录</h3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>orderid</th>
+                <th>购买用户</th>
+                <th>付款金额</th>
+                <th>评分</th>
+                <th>购买日期</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if(App.Orders!=null&&App.Orders.Count>0)
+            {
+                foreach (var order in App.Orders)
+                {
+                <tr>
+                    <td>@order.OrderID</td>
+                    <td>@order.CustomerAccount</td>
+                    <td>@order.PaymentAmount</td>
+                    <td>@order.Score</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" style="text-align: center;">暂无购买信息</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    @if(!string.IsNullOrWhiteSpace(ErrorInfo))
+    {
+        <h3 style="margin-top:50px;">错误信息</h3>
+        <p style="color:red">@ErrorInfo</p>
+    }
+    
+
+</div>
