@@ -20,8 +20,11 @@ namespace stress_test.Controllers
             string myPassword = "Test the cpu stress use BCrypt ";
             string mySalt = BCryptHelper.GenerateSalt();
 
-            BCryptHelper.HashPassword(myPassword, mySalt);
-            
+            for (int i = 0; i < 3; i++)
+            {
+                BCryptHelper.HashPassword(myPassword, mySalt);
+            }
+
             return BCryptHelper.HashPassword(myPassword, mySalt);
         }
 

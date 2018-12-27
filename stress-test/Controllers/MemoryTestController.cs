@@ -18,9 +18,9 @@ namespace stress_test.Controllers
         {
             string myPassword = "Test the cpu stress use BCrypt ";
 
-            for(int i=0;i<14;i++)
+            for (int i = 0; i < 20; i++)
             {
-                myPassword+=myPassword;
+                myPassword += myPassword + Guid.NewGuid().ToString();
             }
 
             return "Memory Test";
