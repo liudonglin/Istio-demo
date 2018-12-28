@@ -6,6 +6,12 @@ metadata:
 spec:
   host: appfront
   trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+      tcp:
+        maxConnections: 100
     tls:
       mode: ISTIO_MUTUAL
   subsets:

@@ -4,16 +4,20 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using MySql.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace appstore_appservice
 {
     public class AppService:IAppService
     {
         private IConfiguration configuration;
+        private IDbConnectionFactory connectionFactory;
 
-        public AppService(IConfiguration _configuration)
+        public AppService(IConfiguration _configuration,IDbConnectionFactory _connectionFactory)
         {
             configuration = _configuration;
+            connectionFactory = _connectionFactory;
         }
 
         public List<AppEntity> GetAllApps()
@@ -45,8 +49,9 @@ namespace appstore_appservice
             msb.Database = connectionInfoSection.GetSection("Database").Value;
             msb.UserID = connectionInfoSection.GetSection("UserID").Value;
             msb.Password = connectionInfoSection.GetSection("Password").Value;
-
-            IDbConnection connection = new MySqlConnection(msb.ConnectionString);
+            msb.MaximumPoolSize = 50;
+            
+            IDbConnection connection = connectionFactory.CreateConnection(msb.ConnectionString);
             return connection;
         }
     }

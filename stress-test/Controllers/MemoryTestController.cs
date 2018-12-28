@@ -18,12 +18,17 @@ namespace stress_test.Controllers
         {
             string myPassword = "Test the cpu stress use BCrypt ";
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 15; i++)
             {
                 myPassword += myPassword + Guid.NewGuid().ToString();
             }
 
-            return "Memory Test";
+            var size = "not count";
+
+            var length = Encoding.UTF8.GetBytes(myPassword).Length;
+            size = length>1048576?length/1048576+"MB":length/1024+"KB";
+
+            return "Memory Total " + size;
         }
     }
 }

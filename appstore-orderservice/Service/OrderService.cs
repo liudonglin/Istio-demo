@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +12,12 @@ namespace appstore_orderservice
     {
         private IConfiguration configuration;
 
-        public OrderService(IConfiguration _configuration)
+        private IDbConnectionFactory connectionFactory;
+
+        public OrderService(IConfiguration _configuration,IDbConnectionFactory _connectionFactory)
         {
             configuration = _configuration;
+            connectionFactory = _connectionFactory;
         }
 
         public List<OrderInfo> GetOrderInfosByAppID(int appid)
@@ -35,8 +39,9 @@ namespace appstore_orderservice
             msb.Database = connectionInfoSection.GetSection("Database").Value;
             msb.UserID = connectionInfoSection.GetSection("UserID").Value;
             msb.Password = connectionInfoSection.GetSection("Password").Value;
-
-            IDbConnection connection = new MySqlConnection(msb.ConnectionString);
+            msb.MaximumPoolSize = 50;
+            
+            IDbConnection connection = connectionFactory.CreateConnection(msb.ConnectionString);
             return connection;
         }
     }
