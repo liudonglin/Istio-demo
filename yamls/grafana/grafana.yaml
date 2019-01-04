@@ -8,14 +8,12 @@ spec:
   template:
     metadata:
       labels:
-        task: monitoring
         k8s-app: grafana
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
       containers:
       - name: grafana
-        image: k8s.gcr.io/heapster-grafana-amd64:v5.0.4
+        image: grafana/grafana:5.3.4
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -24,18 +22,10 @@ spec:
           name: ca-certificates
           readOnly: true
         env:
-        # - name: INFLUXDB_HOST
-        #   value: monitoring-influxdb
         - name: GF_SERVER_HTTP_PORT
           value: "3000"
-          # The following env variables are required to make Grafana accessible via
-          # the kubernetes api-server proxy. On production clusters, we recommend
-          # removing these env variables, setup auth for grafana, and expose the grafana
-          # service using a LoadBalancer or a public IP.
-        - name: GRAFANA_USER
+        - name: GF_SECURITY_ADMIN_USER
           value: "admin"
-        # - name: GRAFANA_PASSWD
-        #   value: "admin"
         - name: GF_SECURITY_ADMIN_PASSWORD
           value: "123456"
         # - name: GF_AUTH_BASIC_ENABLED
@@ -54,25 +44,16 @@ spec:
           path: /etc/ssl/certs
       # - name: grafana-storage
       #   emptyDir: {}
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    # For use as a Cluster add-on (https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
-    # If you are NOT using this as an addon, you should comment out this line.
     kubernetes.io/cluster-service: 'true'
     kubernetes.io/name: monitoring-grafana
   name: monitoring-grafana
   namespace: kube-system
 spec:
-  # In a production setup, we recommend accessing Grafana through an external Loadbalancer
-  # or through a public IP.
-  # type: LoadBalancer
-  # You could also use NodePort to expose the service at a randomly-generated port
   type: NodePort
   ports:
   - port: 80
