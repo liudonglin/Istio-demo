@@ -12,19 +12,21 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
-using IstioUtility;
+using appstore_front.Services;
 
 namespace appstore_front.Controllers
 {
     public class HomeController : Controller
     {
         private IConfiguration configuration;
+        private IAppDetailService appDetailService;
 
         private const string USERCOOKIENAME = "appstore_front_user_cookie";
 
-        public HomeController(IConfiguration _configuration)
+        public HomeController(IConfiguration configuration,IAppDetailService appDetailService)
         {
-            this.configuration = _configuration;
+            this.configuration = configuration;
+            this.appDetailService = appDetailService;
         }
 
         public IActionResult Index()
@@ -35,16 +37,9 @@ namespace appstore_front.Controllers
                 headerStringBuilder.AppendLine($"{header.Key} : {header.Value}");
             }
             ViewData["HeaderInfo"] = headerStringBuilder.ToString();
-
-            var appServiceHost = configuration.GetSection("AppServiceHost").Value;
-            var appDetailUrl = appServiceHost + "/api/appdetail";
-            ViewData["AppDetailUrl"] = appDetailUrl;
-
             try
             {
-                var httpClient = this.GetTraceHttpClient();
-                var task = httpClient.GetAsync(appDetailUrl).Result;
-                var apps = task.Content.ReadAsAsync<List<AppEntity>>().Result;
+                var apps = appDetailService.Get();
                 ViewData["Apps"] = apps;
                 ViewData["Appservice_Error"] = string.Empty;
             }
@@ -157,14 +152,9 @@ namespace appstore_front.Controllers
                 return View("index");
             }
 
-            var appServiceHost = configuration.GetSection("AppServiceHost").Value;
-            var appDetailUrl = $"{appServiceHost}/api/appdetail/{appID}";
-
             try
             {
-                var httpClient = this.GetTraceHttpClient();
-                var task = httpClient.GetAsync(appDetailUrl).Result;
-                var app = task.Content.ReadAsAsync<AppEntity>().Result;
+                var app = appDetailService.Get(appID.Value);
                 if(app!=null)
                 {
                     ViewData["AppInfo"] = app;

@@ -2,7 +2,6 @@
     ViewData["Title"] = "Home Page";
     var Apps = ViewData["Apps"] as List<AppEntity>;
     var ErrorInfo = ViewData["Appservice_Error"].ToString();
-    var AppDetailUrl = ViewData["AppDetailUrl"].ToString();
     var HeaderInfo = ViewData["HeaderInfo"].ToString();
 }
 
@@ -50,9 +49,6 @@
 
 <!-- 应用列表start -->
 <div class="row">
-    
-    <h3 style="margin-top:50px;">调用地址</h3>
-    <p>@AppDetailUrl</p>
     <h3 style="margin-top:50px;">请求头信息</h3>
     <p>@HeaderInfo</p>
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Text;
 
 namespace appstore_appservice
 {

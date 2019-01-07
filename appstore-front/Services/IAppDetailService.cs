@@ -1,22 +1,18 @@
 using System.Collections.Generic;
-using IstioUtility.Attributes;
+using OF.FeignCore.Attributes;
+using OF.FeignCore.Extensions;
 
 namespace appstore_front.Services
 {
-    [FeignService("http://localhost:5001/")]
+    [FeignClient("AppServiceHost")]
     public interface IAppDetailService
     {
-        [FeignMethod("api/appdetail",HttpMethod.Get)]
+        [RequestLine("GET api/appdetail")]
         List<AppEntity> Get();
 
-        [FeignMethod("api/appdetail",HttpMethod.Get)]
-        AppEntity Get(int id);
+        [RequestLine("GET api/appdetail/{id}")]
+        AppEntity Get([Param("id")] int id);
 
-        [FeignMethod("/api/appdetail/test_get_entity",HttpMethod.Post)]
-        string TestGetEntity(int sysno,[FeignParam("tname")]string name);
-
-        [FeignMethod("/api/appdetail/test_get_string",HttpMethod.Post)]
-        string TestGetString();
 
     }
 }

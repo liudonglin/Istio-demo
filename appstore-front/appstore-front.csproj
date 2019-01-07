@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IstioUtility\IstioUtility.csproj" />
+    <ProjectReference Include="..\..\OF.Feign\OF.FeignCore\OF.FeignCore.csproj" />
+    <ProjectReference Include="..\..\OF.Feign\OF.FeignCore.Extensions\OF.FeignCore.Extensions.csproj" />
   </ItemGroup>
 
 </Project>
