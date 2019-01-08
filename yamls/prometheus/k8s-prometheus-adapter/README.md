@@ -13,7 +13,7 @@ CA签名
 openssl x509 -req -in prometheus-adapter-serving.csr -CA ./ca.crt -CAkey ./ca.key -CAcreateserial -out prometheus-adapter-serving.crt -days 3650
 
 创建secret
-create secret generic cm-adapter-serving-certs --from-file=serving.crt=./prometheus-adapter-serving.crt --from-file=serving.key=./prometheus-adapter-serving.key -n prom 
+kubectl create secret generic cm-adapter-serving-certs --from-file=serving.crt=./prometheus-adapter-serving.crt --from-file=serving.key=./prometheus-adapter-serving.key -n prom 
 
 kubectl api-versions
 确保出现custom.metrics.k8s.io/v1beta1
