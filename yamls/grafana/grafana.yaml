@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: monitoring-grafana
-  namespace: kube-system
+  namespace: prom
 spec:
   replicas: 1
   template:
@@ -52,7 +52,7 @@ metadata:
     kubernetes.io/cluster-service: 'true'
     kubernetes.io/name: monitoring-grafana
   name: monitoring-grafana
-  namespace: kube-system
+  namespace: prom
 spec:
   type: NodePort
   ports:
