@@ -52,26 +52,26 @@ spec:
   selector:
     app: appservice
 ---
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: appservice-v1
-  namespace: test-appstore
-spec:
-  replicas: 1
-  template:
-    metadata:
-      namespace: test-appstore
-      labels:
-        app: appservice
-        version: v1
-    spec:
-      containers:
-      - name: appservice
-        image: gavin/appstore-appservice:1.0
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 5001
+# apiVersion: extensions/v1beta1
+# kind: Deployment
+# metadata:
+#   name: appservice-v1
+#   namespace: test-appstore
+# spec:
+#   replicas: 1
+#   template:
+#     metadata:
+#       namespace: test-appstore
+#       labels:
+#         app: appservice
+#         version: v1
+#     spec:
+#       containers:
+#       - name: appservice
+#         image: gavin/appstore-appservice:1.0
+#         imagePullPolicy: IfNotPresent
+#         ports:
+#         - containerPort: 5001
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment

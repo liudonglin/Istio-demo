@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: mysql-entry
+  namespace: default
+spec:
+  hosts:
+  - 172.16.76.127
+  ports:
+  - number: 3306
+    name: jdbc
+    protocol: TCP

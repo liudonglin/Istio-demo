@@ -10,12 +10,8 @@ spec:
   - route:
     - destination:
         host: appservice
-        subset: v1
-      weight: 10
-    - destination:
-        host: appservice
         subset: v2
-      weight: 90
+      weight: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
