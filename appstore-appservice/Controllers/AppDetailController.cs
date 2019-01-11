@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using IstioUtility;
+using Microsoft.Extensions.Logging;
 
 namespace appstore_appservice
 {
@@ -20,10 +21,15 @@ namespace appstore_appservice
         private IAppService appService;
         private IConfiguration configuration;
 
-        public AppDetailController(IAppService _appService,IConfiguration _configuration)
+        private readonly  ILogger logger;
+
+        public AppDetailController(IAppService _appService
+        ,IConfiguration _configuration
+        ,ILogger<AppDetailController> logger)
         {
             this.appService = _appService;
             this.configuration = _configuration;
+            this.logger = logger;
         }
 
         // GET api/appdetail
@@ -36,7 +42,8 @@ namespace appstore_appservice
                 headerStringBuilder.AppendLine($"{header.Key} : {header.Value}");
             }
             var headerInfo = headerStringBuilder.ToString();
-            Console.Write(headerInfo) ;
+            logger.LogInformation(headerInfo);
+            logger.LogWarning(headerInfo);
             return appService.GetAllApps();
         }
 
@@ -44,13 +51,8 @@ namespace appstore_appservice
         [HttpGet("{id}")]
         public ActionResult<AppEntity> Get(int id)
         {
-            var headerStringBuilder = new StringBuilder();
-            foreach(var header in Request.Headers)
-            {
-                headerStringBuilder.AppendLine($"{header.Key} : {header.Value}");
-            }
-            var headerInfo = headerStringBuilder.ToString();
-            Console.Write(headerInfo) ;
+            logger.LogInformation("根据id获取AppEntity的信息");
+            logger.LogWarning("根据id获取AppEntity的信息");
 
             var result = appService.GetAppByAppID(id);
 
