@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using OF.FeignCore.Attributes;
-using OF.FeignCore.Extensions;
+using JWell.FeignNet.Core.Attributes;
+using JWell.FeignNet.Extensions;
 
 namespace appstore_front.Services
 {

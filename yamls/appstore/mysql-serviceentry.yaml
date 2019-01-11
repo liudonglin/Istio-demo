@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   hosts:
-  - 172.16.76.127
+  - 47.99.153.169
   ports:
   - number: 3306
     name: jdbc

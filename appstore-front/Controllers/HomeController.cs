@@ -21,12 +21,17 @@ namespace appstore_front.Controllers
         private IConfiguration configuration;
         private IAppDetailService appDetailService;
 
+        private ISSOService ssoService;
+
         private const string USERCOOKIENAME = "appstore_front_user_cookie";
 
-        public HomeController(IConfiguration configuration,IAppDetailService appDetailService)
+        public HomeController(IConfiguration configuration
+        ,IAppDetailService appDetailService
+        ,ISSOService ssoService)
         {
             this.configuration = configuration;
             this.appDetailService = appDetailService;
+            this.ssoService = ssoService;
         }
 
         public IActionResult Index()
@@ -59,34 +64,54 @@ namespace appstore_front.Controllers
             return View();
         }
 
-        public IActionResult DoLogin(string UserName,string Password)
+        public IActionResult DoLogin(string userName,string password)
         {
-            var accountServiceHost = configuration.GetSection("AccountServiceHost").Value;
-            var accountTokenlUrl = accountServiceHost + "/sso/oauth/token";
-            var httpClient = HttpClientFactory.Create();
-            
-            var postData = $"grant_type=password&client_id=jw.sso&client_secret=8f6727b0c1504774a407b928e96a197f&username={UserName}&password={Password}&scope=all";
-            var request = new StringContent(postData,Encoding.UTF8,"application/x-www-form-urlencoded");
-            var task = httpClient.PostAsync(accountTokenlUrl,request).Result;
-            var token = task.Content.ReadAsAsync<TokenInfo>().Result;
-
-            if(string.IsNullOrWhiteSpace(token.access_token))
+            var token = ssoService.GetTokenInfo(userName,password);
+            if(token==null||string.IsNullOrWhiteSpace(token.access_token))
             {
                 ViewData["SSOError"] = "用户名或密码错误！";
             }
-
-            var accountUserlUrl = accountServiceHost + $"/sso/v1/account/getUserInfo";
-            httpClient.DefaultRequestHeaders.Add("Authorization","Bearer "+token.access_token);
-            task = httpClient.GetAsync(accountUserlUrl).Result;
-            var userinfo = task.Content.ReadAsAsync<ResultData<UserInfo>>().Result;
-
-            if(userinfo.data==null)
+            else
             {
-                ViewData["SSOError"] = "用户获取失败请稍后再试！";
+                var result = ssoService.GetUserInfo(token.access_token);
+                var userinfo = result.data;
+                if(userinfo==null||string.IsNullOrWhiteSpace(userinfo.userSysNo))
+                {
+                    ViewData["SSOError"] = "用户获取失败请稍后再试！";
+                }
+                else
+                {
+                    ViewData["Userinfo"] = userinfo;
+                    SaveCookieUserinfo(userinfo);
+                }
             }
 
-            ViewData["Userinfo"] = userinfo.data;
-            SaveCookieUserinfo(userinfo.data);
+            // var accountServiceHost = configuration.GetSection("AccountServiceHost").Value;
+            // var accountTokenlUrl = accountServiceHost + "/sso/oauth/token";
+            // var httpClient = HttpClientFactory.Create();
+
+            // var postData = $"grant_type=password&client_id=jw.sso&client_secret=8f6727b0c1504774a407b928e96a197f&username={userName}&password={password}&scope=all";
+            // var request = new StringContent(postData, Encoding.UTF8, "application/x-www-form-urlencoded");
+            // var task = httpClient.PostAsync(accountTokenlUrl, request).Result;
+            // var token = task.Content.ReadAsAsync<TokenInfo>().Result;
+
+            // if (string.IsNullOrWhiteSpace(token.access_token))
+            // {
+            //     ViewData["SSOError"] = "用户名或密码错误！";
+            // }
+
+            // var accountUserlUrl = accountServiceHost + $"/sso/v1/account/getUserInfo";
+            // httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token.access_token);
+            // task = httpClient.GetAsync(accountUserlUrl).Result;
+            // var userinfo = task.Content.ReadAsAsync<ResultData<UserInfo>>().Result;
+
+            // if (userinfo.data == null)
+            // {
+            //     ViewData["SSOError"] = "用户获取失败请稍后再试！";
+            // }
+
+            // ViewData["Userinfo"] = userinfo.data;
+            // SaveCookieUserinfo(userinfo.data);
             return View("Account");
         }
 

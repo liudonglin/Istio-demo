@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OF.Feign\OF.FeignCore\OF.FeignCore.csproj" />
-    <ProjectReference Include="..\..\OF.Feign\OF.FeignCore.Extensions\OF.FeignCore.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\JWellHub\jwell.feignnet\JWell.FeignNet.Core\JWell.FeignNet.Core.csproj" />
+    <ProjectReference Include="..\..\..\JWellHub\jwell.feignnet\JWell.FeignNet.Extensions\JWell.FeignNet.Extensions.csproj" />
   </ItemGroup>
 
 </Project>
