@@ -31,7 +31,8 @@ namespace appstore_front
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddFeign(Configuration,new string[]{"appstore-front"});
+            services.AddHttpClient();
+            //services.AddFeign(new string[]{"appstore-front"});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

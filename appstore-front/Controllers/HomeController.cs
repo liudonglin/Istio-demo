@@ -25,13 +25,15 @@ namespace appstore_front.Controllers
 
         private const string USERCOOKIENAME = "appstore_front_user_cookie";
 
+        private readonly IHttpClientFactory httpClientFactory;
+
         public HomeController(IConfiguration configuration
-        ,IAppDetailService appDetailService
-        ,ISSOService ssoService)
+        ,IHttpClientFactory httpClientFactory)
         {
             this.configuration = configuration;
-            this.appDetailService = appDetailService;
-            this.ssoService = ssoService;
+            this.httpClientFactory = httpClientFactory;
+            //this.appDetailService = appDetailService;
+            //this.ssoService = ssoService;
         }
 
         public IActionResult Index()
@@ -44,7 +46,12 @@ namespace appstore_front.Controllers
             ViewData["HeaderInfo"] = headerStringBuilder.ToString();
             try
             {
-                var apps = appDetailService.Get();
+                //var apps = appDetailService.Get();
+                var appServiceHost = configuration.GetSection("AppServiceHost").Value;
+                var appDetailUrl = appServiceHost + "/api/appdetail";
+                var httpClient = httpClientFactory.CreateClient();
+                var task = httpClient.GetAsync(appDetailUrl).Result;
+                var apps = task.Content.ReadAsAsync<List<AppEntity>>().Result;
                 ViewData["Apps"] = apps;
                 ViewData["Appservice_Error"] = string.Empty;
             }
@@ -179,7 +186,13 @@ namespace appstore_front.Controllers
 
             try
             {
-                var app = appDetailService.Get(appID.Value);
+                var appServiceHost = configuration.GetSection("AppServiceHost").Value;
+                var appDetailUrl = $"{appServiceHost}/api/appdetail/{appID}";
+                var httpClient = httpClientFactory.CreateClient();
+                var task = httpClient.GetAsync(appDetailUrl).Result;
+                var app = task.Content.ReadAsAsync<AppEntity>().Result;
+
+                //var app = appDetailService.Get(appID.Value);
                 if(app!=null)
                 {
                     ViewData["AppInfo"] = app;

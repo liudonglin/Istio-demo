@@ -21,15 +21,15 @@ namespace appstore_appservice
         private IAppService appService;
         private IConfiguration configuration;
 
-        private readonly  ILogger logger;
+        private readonly IHttpClientFactory httpClientFactory;
 
         public AppDetailController(IAppService _appService
         ,IConfiguration _configuration
-        ,ILogger<AppDetailController> logger)
+        ,IHttpClientFactory httpClientFactory)
         {
             this.appService = _appService;
             this.configuration = _configuration;
-            this.logger = logger;
+            this.httpClientFactory = httpClientFactory;
         }
 
         // GET api/appdetail
@@ -42,8 +42,6 @@ namespace appstore_appservice
                 headerStringBuilder.AppendLine($"{header.Key} : {header.Value}");
             }
             var headerInfo = headerStringBuilder.ToString();
-            logger.LogInformation(headerInfo);
-            logger.LogWarning(headerInfo);
             return appService.GetAllApps();
         }
 
@@ -51,9 +49,6 @@ namespace appstore_appservice
         [HttpGet("{id}")]
         public ActionResult<AppEntity> Get(int id)
         {
-            logger.LogInformation("根据id获取AppEntity的信息");
-            logger.LogWarning("根据id获取AppEntity的信息");
-
             var result = appService.GetAppByAppID(id);
 
             if (result != null)
@@ -61,7 +56,8 @@ namespace appstore_appservice
                 var appOrderHost = configuration.GetSection("OrderServiceHost").Value;
                 var appOrderUrl = appOrderHost + $"/api/orders/getordersbyappid/{id}";
 
-                var httpClient = this.GetTraceHttpClient();
+                //var httpClient = this.GetTraceHttpClient();
+                var httpClient = httpClientFactory.CreateClient();
                 var task = httpClient.GetAsync(appOrderUrl).Result;
                 result.Orders = task.Content.ReadAsAsync<List<OrderInfo>>().Result;
             }

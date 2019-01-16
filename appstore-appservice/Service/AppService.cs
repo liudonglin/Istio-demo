@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Text;
+using System;
+using Microsoft.Extensions.Logging;
 
 namespace appstore_appservice
 {
@@ -15,19 +17,32 @@ namespace appstore_appservice
         private IConfiguration configuration;
         private IDbConnectionFactory connectionFactory;
 
-        public AppService(IConfiguration _configuration,IDbConnectionFactory _connectionFactory)
+        private readonly  ILogger logger;
+
+        public AppService(IConfiguration _configuration
+        ,IDbConnectionFactory _connectionFactory
+        ,ILogger<AppDetailController> logger)
         {
             configuration = _configuration;
             connectionFactory = _connectionFactory;
+            this.logger = logger;
         }
 
         public List<AppEntity> GetAllApps()
         {
             using (var conn = BuildConnection())
             {
-                var queryResult = conn.Query<AppEntity>("select * from test_appstore.AppEntity");
-                conn.Close();
-                return queryResult.ToList();
+                try
+                {
+                    var queryResult = conn.Query<AppEntity>("select * from test_appstore.AppEntity");
+                    conn.Close();
+                    return queryResult.ToList();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString());
+                    return new List<AppEntity>();
+                }
             }
         }
 
@@ -35,9 +50,17 @@ namespace appstore_appservice
         {
             using (var conn = BuildConnection())
             {
-                var queryResult = conn.Query<AppEntity>("select * from test_appstore.AppEntity where AppID=@AppID ", new { AppID = appid }).SingleOrDefault();
-                conn.Close();
-                return queryResult;
+                try
+                {
+                    var queryResult = conn.Query<AppEntity>("select * from test_appstore.AppEntity where AppID=@AppID ", new { AppID = appid }).SingleOrDefault();
+                    conn.Close();
+                    return queryResult;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString());
+                    return null;
+                }
             }
         }
 
