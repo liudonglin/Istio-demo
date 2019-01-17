@@ -20,16 +20,15 @@ namespace appstore_appservice
     {
         private IAppService appService;
         private IConfiguration configuration;
-
-        private readonly IHttpClientFactory httpClientFactory;
+        private IOrderService orderService;
 
         public AppDetailController(IAppService _appService
-        ,IConfiguration _configuration
-        ,IHttpClientFactory httpClientFactory)
+        , IConfiguration _configuration
+        , IOrderService orderService)
         {
             this.appService = _appService;
             this.configuration = _configuration;
-            this.httpClientFactory = httpClientFactory;
+            this.orderService = orderService;
         }
 
         // GET api/appdetail
@@ -53,30 +52,10 @@ namespace appstore_appservice
 
             if (result != null)
             {
-                var appOrderHost = configuration.GetSection("OrderServiceHost").Value;
-                var appOrderUrl = appOrderHost + $"/api/orders/getordersbyappid/{id}";
-
-                //var httpClient = this.GetTraceHttpClient();
-                var httpClient = httpClientFactory.CreateClient();
-                var task = httpClient.GetAsync(appOrderUrl).Result;
-                result.Orders = task.Content.ReadAsAsync<List<OrderInfo>>().Result;
+                result.Orders = orderService.GetOrdersByAppid(id);
             }
 
             return result;
-        }
-
-        // post api/appdetail/test_get_entity
-        [HttpPost("test_get_entity")]
-        public ActionResult<AppEntity> TestGetEntity(dynamic app)
-        {
-            var result = appService.GetAppByAppID(1);
-            return result;
-        }
-
-        [HttpPost("test_get_string")]
-        public ActionResult<string> TestGetString()
-        {
-            return "api TestGetString result";
         }
     }
 }

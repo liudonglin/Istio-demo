@@ -30,7 +30,11 @@ namespace appstore_appservice
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IAppService, AppService>();
             services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
-            services.AddHttpClient();
+            services.AddHttpClient("order-service", httpclient =>
+            {
+                httpclient.BaseAddress = new Uri(Configuration.GetSection("OrderServiceHost").Value);
+            });
+            services.AddSingleton<IOrderService, OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

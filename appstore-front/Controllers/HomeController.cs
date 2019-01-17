@@ -25,13 +25,11 @@ namespace appstore_front.Controllers
 
         private const string USERCOOKIENAME = "appstore_front_user_cookie";
 
-        private readonly IHttpClientFactory httpClientFactory;
-
         public HomeController(IConfiguration configuration
-        ,IHttpClientFactory httpClientFactory)
+        ,IAppDetailService appDetailService)
         {
             this.configuration = configuration;
-            this.httpClientFactory = httpClientFactory;
+            this.appDetailService = appDetailService;
             //this.appDetailService = appDetailService;
             //this.ssoService = ssoService;
         }
@@ -46,12 +44,8 @@ namespace appstore_front.Controllers
             ViewData["HeaderInfo"] = headerStringBuilder.ToString();
             try
             {
-                //var apps = appDetailService.Get();
-                var appServiceHost = configuration.GetSection("AppServiceHost").Value;
-                var appDetailUrl = appServiceHost + "/api/appdetail";
-                var httpClient = httpClientFactory.CreateClient();
-                var task = httpClient.GetAsync(appDetailUrl).Result;
-                var apps = task.Content.ReadAsAsync<List<AppEntity>>().Result;
+                var apps = appDetailService.Get();
+
                 ViewData["Apps"] = apps;
                 ViewData["Appservice_Error"] = string.Empty;
             }
@@ -186,13 +180,7 @@ namespace appstore_front.Controllers
 
             try
             {
-                var appServiceHost = configuration.GetSection("AppServiceHost").Value;
-                var appDetailUrl = $"{appServiceHost}/api/appdetail/{appID}";
-                var httpClient = httpClientFactory.CreateClient();
-                var task = httpClient.GetAsync(appDetailUrl).Result;
-                var app = task.Content.ReadAsAsync<AppEntity>().Result;
-
-                //var app = appDetailService.Get(appID.Value);
+                var app = appDetailService.Get(appID.Value);
                 if(app!=null)
                 {
                     ViewData["AppInfo"] = app;
@@ -218,6 +206,28 @@ namespace appstore_front.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        
+        private void SetTraceHeaderInfo(HttpClient httpClient)
+        {
+            foreach (var header in this.Request.Headers)
+            {
+                switch (header.Key)
+                {
+                    case "x-request-id":
+                    case "x-b3-traceid":
+                    case "x-b3-spanid":
+                    case "x-b3-parentspanid":
+                    case "x-b3-sampled":
+                    case "x-b3-flags":
+                        if (!string.IsNullOrWhiteSpace(header.Value.ToString()))
+                        {
+                            httpClient.DefaultRequestHeaders.Add(header.Key.ToString(), header.Value.ToString());
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
     }
 }

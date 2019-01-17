@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using appstore_front.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,8 +32,12 @@ namespace appstore_front
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddHttpClient();
             //services.AddFeign(new string[]{"appstore-front"});
+            services.AddHttpClient("app-service", httpclient =>
+            {
+                httpclient.BaseAddress = new Uri(Configuration.GetSection("AppServiceHost").Value);
+            });
+            services.AddSingleton<IAppDetailService, AppDetailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
