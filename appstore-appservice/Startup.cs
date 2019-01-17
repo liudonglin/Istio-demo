@@ -30,10 +30,10 @@ namespace appstore_appservice
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IAppService, AppService>();
             services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
-            services.AddHttpClient("order-service", httpclient =>
-            {
-                httpclient.BaseAddress = new Uri(Configuration.GetSection("OrderServiceHost").Value);
-            });
+            // services.AddHttpClient("order-service", httpclient =>
+            // {
+            //     httpclient.BaseAddress = new Uri(Configuration.GetSection("OrderServiceHost").Value);
+            // });
             services.AddSingleton<IOrderService, OrderService>();
         }
 

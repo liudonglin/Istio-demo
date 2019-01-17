@@ -73,7 +73,7 @@ namespace appstore_appservice
             msb.Database = connectionInfoSection.GetSection("Database").Value;
             msb.UserID = connectionInfoSection.GetSection("UserID").Value;
             msb.Password = connectionInfoSection.GetSection("Password").Value;
-            msb.MaximumPoolSize = 50;
+            msb.MaximumPoolSize = 100;
             
             IDbConnection connection = connectionFactory.CreateConnection(msb.ConnectionString);
             return connection;

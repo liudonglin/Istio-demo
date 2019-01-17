@@ -12,18 +12,18 @@ namespace appstore_appservice
 
     public class OrderService : IOrderService
     {
-        private readonly IHttpClientFactory httpClientFactory;
+        private readonly HttpClient httpClient;
 
-        public OrderService(IHttpClientFactory httpClientFactory,IConfiguration configuration)
+        public OrderService(IConfiguration configuration)
         {
-            this.httpClientFactory = httpClientFactory;
+            this.httpClient = new HttpClient(new HttpClientHandler { MaxConnectionsPerServer = 100, UseProxy = false });
+            this.httpClient.BaseAddress = new System.Uri(configuration.GetSection("OrderServiceHost").Value);
         }
 
         public List<OrderInfo> GetOrdersByAppid(int appid)
         {
             var appOrderUrl = $"/api/orders/getordersbyappid/{appid}";
-            var apiClient = httpClientFactory.CreateClient("order-service");
-            var responseString = apiClient.GetStringAsync(appOrderUrl).Result;
+            var responseString = this.httpClient.GetStringAsync(appOrderUrl).Result;
             var orders = JsonConvert.DeserializeObject<List<OrderInfo>>(responseString);
             return orders;
         }

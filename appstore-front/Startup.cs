@@ -33,10 +33,10 @@ namespace appstore_front
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //services.AddFeign(new string[]{"appstore-front"});
-            services.AddHttpClient("app-service", httpclient =>
-            {
-                httpclient.BaseAddress = new Uri(Configuration.GetSection("AppServiceHost").Value);
-            });
+            // services.AddHttpClient("app-service", httpclient =>
+            // {
+            //     httpclient.BaseAddress = new Uri(Configuration.GetSection("AppServiceHost").Value);
+            // });
             services.AddSingleton<IAppDetailService, AppDetailService>();
         }
 

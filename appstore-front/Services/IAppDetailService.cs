@@ -21,18 +21,18 @@ namespace appstore_front.Services
 
     public class AppDetailService : IAppDetailService
     {
-        private readonly IHttpClientFactory httpClientFactory;
+        private readonly HttpClient httpClient;
 
-        public AppDetailService(IHttpClientFactory httpClientFactory)
+        public AppDetailService(IConfiguration configuration)
         {
-            this.httpClientFactory = httpClientFactory;
+            this.httpClient = new HttpClient(new HttpClientHandler { MaxConnectionsPerServer = 100, UseProxy = false });
+            this.httpClient.BaseAddress = new System.Uri(configuration.GetSection("AppServiceHost").Value);
         }
 
         public List<AppEntity> Get()
         {
             var appDetailUrl = "/api/appdetail";
-            var apiClient = httpClientFactory.CreateClient("app-service");
-            var responseString = apiClient.GetStringAsync(appDetailUrl).Result;
+            var responseString = this.httpClient.GetStringAsync(appDetailUrl).Result;
             var apps = JsonConvert.DeserializeObject<List<AppEntity>>(responseString);
             return apps;
         }
@@ -40,8 +40,7 @@ namespace appstore_front.Services
         public AppEntity Get(int id)
         {
             var appDetailUrl = $"/api/appdetail/{id}";
-            var apiClient = httpClientFactory.CreateClient("app-service");
-            var responseString = apiClient.GetStringAsync(appDetailUrl).Result;
+            var responseString = this.httpClient.GetStringAsync(appDetailUrl).Result;
             var app = JsonConvert.DeserializeObject<AppEntity>(responseString);
             return app;
         }
