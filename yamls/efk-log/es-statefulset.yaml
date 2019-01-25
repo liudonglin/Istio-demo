@@ -98,9 +98,7 @@ spec:
               fieldPath: metadata.namespace
       volumes:
       - name: elasticsearch-logging
-        #emptyDir: {}
-        persistentVolumeClaim:
-          claimName: es-pvc
+        emptyDir: {}
       # Elasticsearch requires vm.max_map_count to be at least 262144.
       # If your OS already sets up this number to a higher value, feel free
       # to remove this init container.
